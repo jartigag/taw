@@ -11,3 +11,21 @@
 > El programa utiliza la librería "tabulate" para generar una tabla con los datos resumidos. También se incluyen funciones auxiliares para procesar las horas trabajadas y crear una barra gráfica ASCII para representar visualmente las horas trabajadas.[^1]
 
 [^1]: Descripción generada con ChatGPT
+
+## Instalación
+
+```
+# ┌== Instalación recomendada =========================================================┐
+# Las dependencias 'pyyaml' y 'tabulate' se instalarán en un entorno virtual de Python:
+# $ pipenv install
+# └====================================================================================┘
+```
+```
+# ┌== Uso ===========================================┐
+# Imprimir horas trabajadas en la semana actual:
+# $ pipenv run ./TAW.py
+#
+# Imprimir horas trabajadas en las 3 últimas semanas:
+# $ pipenv run ./TAW.py -2,-1,0
+# └==================================================┘
+```
