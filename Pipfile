@@ -1,0 +1,18 @@
+# How to use this file:
+# $ python -m pipenv install
+# so a virtual environment will be created. Then, the tool can be executed with:
+# $ python -m pipenv run python pretaw.py
+
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pyyaml = "*"
+tabulate = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
