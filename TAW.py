@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 #
-# ┌== Recommended installation =============================================================┐
+# ┌== Recommended installation ==========================================================================┐
 #
-#  Dependencies 'pyyaml' and 'tabulate' will be installed in a Python virtual environment:
+#  Dependencies 'matplotlib', 'pyyaml' and 'tabulate' will be installed in a Python virtual environment:
 #
 # $ pipenv install
 #
-# └=========================================================================================┘
+# └======================================================================================================┘
 #
 # ┌== Usage =========================================┐
 #
@@ -23,8 +23,8 @@
 # More info: https://github.com/jartigag/taw
 
 author  = "@jartigag"
-version = '1.0'
-date    = '2023-04-17'
+version = '1.1wip'
+date    = '2023-05-10'
 
 from datetime import datetime, timedelta
 from math import ceil
@@ -97,11 +97,15 @@ if __name__ == "__main__":
 
     # Get the command line arguments:
     args = sys.argv[1:]
+    plot = False
     if not args:
         weeks = [0]
     else:
         try:
             weeks = [int(x) for x in args[0].split(',')]
+            if len(args)>2:
+                plot = True
+                import matplotlib.pyplot as plt
         except ValueError:
             print("The provided week numbers must be integers separated by commas")
             exit()
