@@ -28,6 +28,13 @@ date    = '2023-05-10'
 
 TAW_DIRS = ["taw/", "taw/_aparcados/"]
 
+TOTAL_WORKING_HOURS_EACH_WEEK = {
+    **{i: 41 for i in range(1, 25)},  # rest of the year
+    25: 36.5,                         # from June 20th to June 26th
+    **{i: 35 for i in range(26, 37)}, # from June 27th to September 11th
+    **{i: 41 for i in range(37, 53)}, # rest of the year
+}
+
 from datetime import datetime, timedelta
 from math import ceil
 from pathlib import Path
@@ -113,6 +120,11 @@ if __name__ == "__main__":
             print("The provided week numbers must be integers separated by commas")
             exit()
 
+    # Set the dates on which worked hours will be added:
+    contemplated_dates = []
+    for week in weeks:
+        contemplated_dates += working_days_of_a_specific_week(week_number=week)
+
     for week in weeks:
         # Set the dates for which to sum the worked hours:
         contemplated_dates = working_days_of_a_specific_week(week_number=week)
@@ -157,13 +169,35 @@ if __name__ == "__main__":
                         notes_row.append("")
                 if any(h!='-' for h in hours_row[1:]): # excluding the first element of the row, which is the project name
                     table_rows.append(hours_row)
-                    total_hours          = 41
-                    total_hours_row      = sum(filter(lambda x: x != '-', hours_row[1:]))
-                    total_hours_row_str  = "{:04.1f}".format(total_hours_row)
-                    percent_str          = "{:04.1f}".format(total_hours_row/total_hours*100)
-                    notes_row[0]         = f"||{''.join(ascii_bar(total_hours_row, total_hours, max_num_chars_project_name))}||"
+                    TOTAL_WORKING_HOURS_EACH_WEEK = 41
+                    total_hours_row               = sum(filter(lambda x: x != '-', hours_row[1:]))
+                    total_hours_row_str           = "{:04.1f}".format(total_hours_row)
+                    percent_str                   = "{:04.1f}".format(total_hours_row/TOTAL_WORKING_HOURS_EACH_WEEK*100)
+                    notes_row[0]                  = f"||{''.join(ascii_bar(total_hours_row, TOTAL_WORKING_HOURS_EACH_WEEK, max_num_chars_project_name))}||"
                     table_rows.append(notes_row)                                                                    # 15 chars =        len(______________)
                     table_rows.append([f"└-{total_hours_row_str} h ({percent_str} %){' '*( max_num_chars_project_name-15 )}-┘"]) #example: "09.5 h (22.4 %)"
 
             # Print the table:
             print("\n", tabulate(table_rows, headers=['Project'] + [str(date) for date in contemplated_dates], numalign='right'))
+
+    # Visualize the weeks graphically:
+    # TODO: Represent the percentage of hours for each project compared to the total working hours per week using bars,
+    #       indexing each sum on the first day of each week
+    # TODO: Stack the bars in the graph so that each week adds up to 100%
+    if plot:
+        projects         = list(hours_per_project.keys())
+        project_data     = [[hours_per_project[project][date]['hours'] for date in contemplated_dates] for project in projects]
+        plt.figure(figsize=(20, 12))
+        plt.bar(contemplated_dates, project_data[0], label=projects[0])
+        for i in range(1, len(projects)):
+            plt.bar(contemplated_dates, project_data[i], bottom=sum(project_data[i]), label=projects[i])
+        plt.legend()
+        plt.xlabel("Date")
+        plt.ylabel("Hours")
+        first_week_num, first_week_year = contemplated_dates[0].isocalendar()[1],  contemplated_dates[0].isocalendar()[0]
+        last_week_num,  last_week_year  = contemplated_dates[-1].isocalendar()[1], contemplated_dates[-1].isocalendar()[0]
+        plt.title(f"Worked Hours per project between week {first_week_num} of {first_week_year} and week {last_week_num} of {last_week_year}")
+        plt.show()
+        filename = f"TAW - worked hours per project from {contemplated_dates[0]} to {contemplated_dates[-1]}.png"
+        plt.savefig(filename)
+        print(f'Graph saved in the file: "{filename}"')
