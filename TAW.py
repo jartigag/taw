@@ -26,6 +26,8 @@ author  = "@jartigag"
 version = '1.1wip'
 date    = '2023-05-10'
 
+TAW_DIRS = ["taw/", "taw/_aparcados/"]
+
 from datetime import datetime, timedelta
 from math import ceil
 from pathlib import Path
@@ -83,15 +85,16 @@ if __name__ == "__main__":
 
     # Create the nested dictionary to store the worked hours:
     hours_per_project = {}
-    for directory in Path("taw/").iterdir():
-        project = directory.name
-        if directory.is_dir() and re.match(r"^\w+\s\(.*-.*\)$", project):
-        #example: "OPOR1 (OP23-006)", "INTE (TAW-001)", "PROYX (PR21-042)", "PROYZ (PR21-040)"
-            hours_per_project[project] = {}
-    for directory in Path("taw/_aparcados/").iterdir():
-        project = "_aparcados/"+directory.name
-        if directory.is_dir() and re.match(r"^\w+\s\(.*-.*\)$", directory.name):
-            hours_per_project[project] = {}
+    for dir in TAW_DIRS:
+        if Path(dir).is_dir():
+            for subdir in Path(dir).iterdir():
+                project = subdir.name
+                if subdir.is_dir() and re.match(r"^\w+\s\(.*-.*\)$", project):
+                #example: "OPOR1 (OP23-006)", "INTE (TAW-001)", "PROYX (PR21-042)", "PROYZ (PR21-040)"
+                    hours_per_project[project] = {}
+        else:
+            print(f'[!] Folder "{dir}" not found')
+            sys.exit(-1)
     hours_per_project = {k: hours_per_project[k] for k in sorted(hours_per_project.keys(), key=lambda x: x.split()[1].strip('()')) }
     #example: Sort by keys OP23-006, PR21-040, PR21-042, TAW-001
 
@@ -118,46 +121,49 @@ if __name__ == "__main__":
         for project in hours_per_project:
             for date in contemplated_dates:
                 hours_per_project[project][date] = {'hours': 0, 'notes': set()}
-            for file in Path("taw/"+project).iterdir():
-                if file.is_file() and file.suffix==".md":
-                    try:
-                        date_in_filename = datetime.strptime(file.name.split()[0], "%Y-%m-%d").date()
-                    except ValueError:
-                        continue
-                    if date_in_filename in contemplated_dates:
-                        data = yaml.safe_load(quote_hours_in_yaml_header(file))
-                        date = data['date']
-                        if date in contemplated_dates:
-                            duration = convert_hhmm_to_decimal_hour(data['endTime']) - convert_hhmm_to_decimal_hour(data['startTime'])
-                            hours_per_project[project][date]['hours'] += duration
-                            hours_per_project[project][date]['notes'].add(data['title'])
+            for dir in TAW_DIRS:
+                if Path(dir+project).is_dir():
+                    for filename in Path(dir+project).iterdir():
+                        if filename.is_file() and filename.suffix==".md":
+                            try:
+                                date_in_filename = datetime.strptime(filename.name.split()[0], "%Y-%m-%d").date()
+                            except ValueError:
+                                continue
+                            if date_in_filename in contemplated_dates:
+                                data = yaml.safe_load(quote_hours_in_yaml_header(filename))
+                                date = data['date']
+                                if date in contemplated_dates:
+                                    duration = convert_hhmm_to_decimal_hour(data['endTime']) - convert_hhmm_to_decimal_hour(data['startTime'])
+                                    hours_per_project[project][date]['hours'] += duration
+                                    hours_per_project[project][date]['notes'].add(data['title'])
 
         # Convert the dictionary into a list of rows for the table:
         table_rows = []
-        max_num_chars_project_name = len( max(hours_per_project.keys(), key=len) )
-        for project in hours_per_project:
-            hours_row = [f"┌-{project}{' '*( max_num_chars_project_name-len(project) )}-┐"]
-            notes_row = [""]
-            for date in contemplated_dates:
-                if hours_per_project[project][date]['hours']>0:
-                    hours_row.append(hours_per_project[project][date]['hours'])
-                    unified_notes = ". ".join(hours_per_project[project][date]['notes'])
-                    if len(unified_notes)>30:
-                        notes_row.append("\n".join(hours_per_project[project][date]['notes']))
+        if len(hours_per_project)>0:
+            max_num_chars_project_name = len( max(hours_per_project.keys(), key=len) )
+            for project in hours_per_project:
+                hours_row = [f"┌-{project}{' '*( max_num_chars_project_name-len(project) )}-┐"]
+                notes_row = [""]
+                for date in contemplated_dates:
+                    if hours_per_project[project][date]['hours']>0:
+                        hours_row.append(hours_per_project[project][date]['hours'])
+                        unified_notes = ". ".join(hours_per_project[project][date]['notes'])
+                        if len(unified_notes)>30:
+                            notes_row.append("\n".join(hours_per_project[project][date]['notes']))
+                        else:
+                            notes_row.append(unified_notes)
                     else:
-                        notes_row.append(unified_notes)
-                else:
-                    hours_row.append("-")
-                    notes_row.append("")
-            if any(h!='-' for h in hours_row[1:]): # excluding the first element of the row, which is the project name
-                table_rows.append(hours_row)
-                total_hours          = 41
-                total_hours_row      = sum(filter(lambda x: x != '-', hours_row[1:]))
-                total_hours_row_str  = "{:04.1f}".format(total_hours_row)
-                percent_str          = "{:04.1f}".format(total_hours_row/total_hours*100)
-                notes_row[0]         = f"||{''.join(ascii_bar(total_hours_row, total_hours, max_num_chars_project_name))}||"
-                table_rows.append(notes_row)                                                                    # 15 chars =        len(______________)
-                table_rows.append([f"└-{total_hours_row_str} h ({percent_str} %){' '*( max_num_chars_project_name-15 )}-┘"]) #example: "09.5 h (22.4 %)"
+                        hours_row.append("-")
+                        notes_row.append("")
+                if any(h!='-' for h in hours_row[1:]): # excluding the first element of the row, which is the project name
+                    table_rows.append(hours_row)
+                    total_hours          = 41
+                    total_hours_row      = sum(filter(lambda x: x != '-', hours_row[1:]))
+                    total_hours_row_str  = "{:04.1f}".format(total_hours_row)
+                    percent_str          = "{:04.1f}".format(total_hours_row/total_hours*100)
+                    notes_row[0]         = f"||{''.join(ascii_bar(total_hours_row, total_hours, max_num_chars_project_name))}||"
+                    table_rows.append(notes_row)                                                                    # 15 chars =        len(______________)
+                    table_rows.append([f"└-{total_hours_row_str} h ({percent_str} %){' '*( max_num_chars_project_name-15 )}-┘"]) #example: "09.5 h (22.4 %)"
 
             # Print the table:
             print("\n", tabulate(table_rows, headers=['Project'] + [str(date) for date in contemplated_dates], numalign='right'))
