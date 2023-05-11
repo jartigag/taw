@@ -1,32 +1,35 @@
 #!/usr/bin/env python3
 #
-# ┌== Recommended installation ==========================================================================┐
+# ┌== Recommended installation =============================┐
 #
-#  Dependencies 'matplotlib', 'pyyaml' and 'tabulate' will be installed in a Python virtual environment:
+#  Dependencies 'matplotlib', 'pyyaml' and 'tabulate',
+#  specified on Pipfile,
+#  will be installed in a Python virtual environment:
 #
-# $ pipenv install
+#  $ python -m pip install pipenv
+#  $ pipenv install
 #
-# └======================================================================================================┘
+# └=========================================================┘
 #
-# ┌== Usage =========================================┐
+# ┌== Usage ================================================┐
 #
-# Print hours per project worked in the current week:
+#  Print hours per project worked in the current week:
 #
-# $ pipenv run ./TAW.py
+#  $ pipenv run ./TAW.py
 #
-# Print hours per project worked in the last 3 weeks:
+#  Print hours per project worked in the last 3 weeks:
 #
-# $ pipenv run ./TAW.py -2,-1,0
+#  $ pipenv run ./TAW.py -2,-1,0
 #
-# └==================================================┘
+# └=========================================================┘
 #
 # More info: https://github.com/jartigag/taw
 
 author  = "@jartigag"
 version = '1.1wip'
-date    = '2023-05-10'
+date    = '2023-05-11'
 
-TAW_DIRS = ["taw/", "taw/_aparcados/"]
+TAW_DIRS = ["taw/", "taw/_aparcados"]
 
 TOTAL_WORKING_HOURS_EACH_WEEK = {
     **{i: 41 for i in range(1, 25)},  # rest of the year
@@ -93,7 +96,7 @@ if __name__ == "__main__":
     # Create the nested dictionary to store the worked hours:
     hours_per_project = {}
     for dir in TAW_DIRS:
-        if Path(dir).is_dir():
+        if Path(dir+"/").is_dir():
             for subdir in Path(dir).iterdir():
                 project = subdir.name
                 if subdir.is_dir() and re.match(r"^\w+\s\(.*-.*\)$", project):
@@ -122,8 +125,13 @@ if __name__ == "__main__":
 
     # Set the dates on which worked hours will be added:
     contemplated_dates = []
+    contemplated_weeks = []
     for week in weeks:
         contemplated_dates += working_days_of_a_specific_week(week_number=week)
+        contemplated_weeks.append( [ working_days_of_a_specific_week(week_number=week) ] )
+
+    contemplated_dates = sorted(contemplated_dates)
+    contemplated_weeks = sorted(contemplated_weeks)
 
     for week in weeks:
         # Set the dates for which to sum the worked hours:
@@ -134,8 +142,8 @@ if __name__ == "__main__":
             for date in contemplated_dates:
                 hours_per_project[project][date] = {'hours': 0, 'notes': set()}
             for dir in TAW_DIRS:
-                if Path(dir+project).is_dir():
-                    for filename in Path(dir+project).iterdir():
+                if Path(dir+"/"+project).is_dir():
+                    for filename in Path(dir+"/"+project).iterdir():
                         if filename.is_file() and filename.suffix==".md":
                             try:
                                 date_in_filename = datetime.strptime(filename.name.split()[0], "%Y-%m-%d").date()
@@ -156,17 +164,18 @@ if __name__ == "__main__":
             for project in hours_per_project:
                 hours_row = [f"┌-{project}{' '*( max_num_chars_project_name-len(project) )}-┐"]
                 notes_row = [""]
-                for date in contemplated_dates:
-                    if hours_per_project[project][date]['hours']>0:
-                        hours_row.append(hours_per_project[project][date]['hours'])
-                        unified_notes = ". ".join(hours_per_project[project][date]['notes'])
-                        if len(unified_notes)>30:
-                            notes_row.append("\n".join(hours_per_project[project][date]['notes']))
+                for days in contemplated_weeks[week]:
+                    for day in days:
+                        if hours_per_project[project][date]['hours']>0:
+                            hours_row.append(hours_per_project[project][day]['hours'])
+                            unified_notes = ". ".join(hours_per_project[project][day]['notes'])
+                            if len(unified_notes)>30:
+                                notes_row.append("\n".join(hours_per_project[project][day]['notes']))
+                            else:
+                                notes_row.append(unified_notes)
                         else:
-                            notes_row.append(unified_notes)
-                    else:
-                        hours_row.append("-")
-                        notes_row.append("")
+                            hours_row.append("-")
+                            notes_row.append("")
                 if any(h!='-' for h in hours_row[1:]): # excluding the first element of the row, which is the project name
                     table_rows.append(hours_row)
                     TOTAL_WORKING_HOURS_EACH_WEEK = 41
@@ -178,7 +187,7 @@ if __name__ == "__main__":
                     table_rows.append([f"└-{total_hours_row_str} h ({percent_str} %){' '*( max_num_chars_project_name-15 )}-┘"]) #example: "09.5 h (22.4 %)"
 
             # Print the table:
-            print("\n", tabulate(table_rows, headers=['Project'] + [str(date) for date in contemplated_dates], numalign='right'))
+            print("\n", tabulate(table_rows, headers=['Project'] + [str(date) for date in contemplated_weeks[week][0]], numalign='right'))
 
     # Visualize the weeks graphically:
     # TODO: Represent the percentage of hours for each project compared to the total working hours per week using bars,

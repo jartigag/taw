@@ -15,17 +15,27 @@
 ## Instalación
 
 ```
-# ┌== Instalación recomendada =========================================================┐
-# Las dependencias 'pyyaml' y 'tabulate' se instalarán en un entorno virtual de Python:
-# $ pipenv install
-# └====================================================================================┘
-```
-```
-# ┌== Uso ===========================================┐
-# Imprimir horas trabajadas en la semana actual:
-# $ pipenv run ./TAW.py
+# ┌== Recommended installation =============================┐
 #
-# Imprimir horas trabajadas en las 3 últimas semanas:
-# $ pipenv run ./TAW.py -2,-1,0
-# └==================================================┘
+#  Dependencies 'matplotlib', 'pyyaml' and 'tabulate',
+#  specified on Pipfile,
+#  will be installed in a Python virtual environment:
+#
+#  $ python -m pip install pipenv
+#  $ pipenv install
+#
+# └=========================================================┘
+```
+```
+# ┌== Usage ================================================┐
+#
+#  Print hours per project worked in the current week:
+#
+#  $ pipenv run ./TAW.py
+#
+#  Print hours per project worked in the last 3 weeks:
+#
+#  $ pipenv run ./TAW.py -2,-1,0
+#
+# └=========================================================┘
 ```
