@@ -116,9 +116,6 @@ if __name__ == "__main__":
     else:
         try:
             weeks = sorted([int(x) for x in args[0].split(',')])
-            if len(args)>2:
-                plot = True
-                import matplotlib.pyplot as plt
         except ValueError:
             print("[!] The provided week numbers must be integers separated by commas")
             sys.exit(-1)
@@ -187,23 +184,31 @@ if __name__ == "__main__":
             print(tabulate(table_rows, headers=['Project'] + [str(date) for date in contemplated_weeks[week][0]], numalign='right'),"\n")
 
     # Visualize the weeks graphically:
-    # TODO: Represent the percentage of hours for each project compared to the total working hours per week using bars,
-    #       indexing each sum on the first day of each week
-    # TODO: Stack the bars in the graph so that each week adds up to 100%
-    if plot:
+    #TODO: Control the colors
+    #TODO: Show only Mondays on the X-axis
+    if input("Generate graph? [y/N] ").lower().startswith("y"):
+        import matplotlib.pyplot as plt
         projects         = list(hours_per_project.keys())
         project_data     = [[hours_per_project[project][date]['hours'] for date in contemplated_dates] for project in projects]
+
+        project_data_percent = [[100 * sum(project_hours[i:i+5]) / TOTAL_WORKING_HOURS_EACH_WEEK[n_week] for i in range(0, len(project_hours), 5)] for project_hours in project_data]
+
         plt.figure(figsize=(20, 12))
-        plt.bar(contemplated_dates, project_data[0], label=projects[0])
-        for i in range(1, len(projects)):
-            plt.bar(contemplated_dates, project_data[i], bottom=sum(project_data[i]), label=projects[i])
+        bottom = [0] * len(contemplated_weeks)
+        for p in range(len(projects)):
+            plt.bar([contemplated_weeks[i][0][0] for i in contemplated_weeks], project_data_percent[p], bottom=bottom, label=projects[p])
+            #   1st day of each week (Monday) ^^^
+            # Stack the bars so that each week adds up to 100%:
+            bottom = [bottom[s] + project_data_percent[p][s] for s in range(len(contemplated_weeks))]
+
+        plt.ylim([0, 100])
         plt.legend()
         plt.xlabel("Date")
-        plt.ylabel("Hours")
+        plt.ylabel("% Hours")
         first_week_num, first_week_year = contemplated_dates[0].isocalendar()[1],  contemplated_dates[0].isocalendar()[0]
         last_week_num,  last_week_year  = contemplated_dates[-1].isocalendar()[1], contemplated_dates[-1].isocalendar()[0]
-        plt.title(f"Worked Hours per project between week {first_week_num} of {first_week_year} and week {last_week_num} of {last_week_year}")
-        plt.show()
-        filename = f"TAW - worked hours per project from {contemplated_dates[0]} to {contemplated_dates[-1]}.png"
+        plt.title(f"Worked hours per project between week {first_week_num} of {first_week_year} and week {last_week_num} of {last_week_year}")
+
+        filename = f"TAW - Worked hours per project from {contemplated_dates[0]} to {contemplated_dates[-1]}.png"
         plt.savefig(filename)
         print(f'Graph saved in the file: "{filename}"')
