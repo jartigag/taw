@@ -115,27 +115,24 @@ if __name__ == "__main__":
         weeks = [0]
     else:
         try:
-            weeks = [int(x) for x in args[0].split(',')]
+            weeks = sorted([int(x) for x in args[0].split(',')])
             if len(args)>2:
                 plot = True
                 import matplotlib.pyplot as plt
         except ValueError:
-            print("The provided week numbers must be integers separated by commas")
-            exit()
+            print("[!] The provided week numbers must be integers separated by commas")
+            sys.exit(-1)
 
     # Set the dates on which worked hours will be added:
     contemplated_dates = []
-    contemplated_weeks = []
+    contemplated_weeks = {}
     for week in weeks:
-        contemplated_dates += working_days_of_a_specific_week(week_number=week)
-        contemplated_weeks.append( [ working_days_of_a_specific_week(week_number=week) ] )
-
-    contemplated_dates = sorted(contemplated_dates)
-    contemplated_weeks = sorted(contemplated_weeks)
+        contemplated_dates      +=  working_days_of_a_specific_week(week_number=week)
+        contemplated_weeks[week] = [working_days_of_a_specific_week(week_number=week)]
 
     for week in weeks:
-        # Set the dates for which to sum the worked hours:
-        contemplated_dates = working_days_of_a_specific_week(week_number=week)
+
+        n_week = contemplated_weeks[week][0][0].isocalendar()[1]
 
         # Iterate through the files of each project and add both the worked hours and the annotations to the dictionary:
         for project in hours_per_project:
@@ -178,16 +175,16 @@ if __name__ == "__main__":
                             notes_row.append("")
                 if any(h!='-' for h in hours_row[1:]): # excluding the first element of the row, which is the project name
                     table_rows.append(hours_row)
-                    TOTAL_WORKING_HOURS_EACH_WEEK = 41
                     total_hours_row               = sum(filter(lambda x: x != '-', hours_row[1:]))
                     total_hours_row_str           = "{:04.1f}".format(total_hours_row)
-                    percent_str                   = "{:04.1f}".format(total_hours_row/TOTAL_WORKING_HOURS_EACH_WEEK*100)
-                    notes_row[0]                  = f"||{''.join(ascii_bar(total_hours_row, TOTAL_WORKING_HOURS_EACH_WEEK, max_num_chars_project_name))}||"
+                    percent_str                   = "{:04.1f}".format(total_hours_row/TOTAL_WORKING_HOURS_EACH_WEEK[n_week]*100)
+                    notes_row[0]                  = f"||{''.join(ascii_bar(total_hours_row, TOTAL_WORKING_HOURS_EACH_WEEK[n_week], max_num_chars_project_name))}||"
                     table_rows.append(notes_row)                                                                    # 15 chars =        len(______________)
                     table_rows.append([f"└-{total_hours_row_str} h ({percent_str} %){' '*( max_num_chars_project_name-15 )}-┘"]) #example: "09.5 h (22.4 %)"
 
             # Print the table:
-            print("\n", tabulate(table_rows, headers=['Project'] + [str(date) for date in contemplated_weeks[week][0]], numalign='right'))
+            print(f"Week nº{n_week} ({TOTAL_WORKING_HOURS_EACH_WEEK[n_week]} working hours):")
+            print(tabulate(table_rows, headers=['Project'] + [str(date) for date in contemplated_weeks[week][0]], numalign='right'),"\n")
 
     # Visualize the weeks graphically:
     # TODO: Represent the percentage of hours for each project compared to the total working hours per week using bars,
