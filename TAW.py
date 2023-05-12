@@ -30,6 +30,7 @@ version = '1.1'
 date    = '2023-05-12'
 
 TAW_DIRS = ["taw/", "taw/_aparcados"]
+COLORS_CONFIG_FILE = ".obsidian/plugins/obsidian-full-calendar/data.json"
 
 TOTAL_WORKING_HOURS_EACH_WEEK = {
     **{i: 41 for i in range(1, 25)},  # rest of the year
@@ -93,22 +94,45 @@ def ascii_bar(value, max_value, max_bar_length):
 
 def init_nested_dict(dirs):
     hours_per_project = {}
+
     for dir in dirs:
         if Path(dir+"/").is_dir():
             for subdir in Path(dir).iterdir():
                 project = subdir.name
-                if subdir.is_dir()
+                if subdir.is_dir():
                     hours_per_project[project] = {}
         else:
             print(f'[!] Folder "{dir}" not found')
             sys.exit(-1)
+
     # Sort dict by code if project code between parenthesis, else sort by project name:
     hours_per_project = {k: hours_per_project[k] for k in sorted(
-                            hours_per_project.keys(), key=lambda x: x[x.find("(")+1:x.find(")")] if x.find('(')!=x.find(')')!=-1 else x
-                        ) }
+                            hours_per_project.keys(),
+                            key=lambda x: x[x.find("(")+1:x.find(")")] if x.find('(')!=x.find(')')!=-1 else x
+                        )}
 
     return hours_per_project
 
+def load_colors_config(config_file):
+    colors = {}
+
+    if Path(config_file).is_file():
+        colors_config = json.load(open(config_file))
+    else:
+        colors_config = {'calendarSources': ''}
+
+    def replace_all(text, dic):
+        for i, j in dic.items():
+            text = text.replace(i, j)
+        return text
+
+    strings_to_remove = list(set([x for sublist in TAW_DIRS for x in sublist.split('/')])) + ["/"]
+
+    for calendarSources in colors_config['calendarSources']:
+        print(calendarSources['directory'],replace_all(calendarSources['directory'], {k:"" for k in strings_to_remove}))
+        colors[replace_all(calendarSources['directory'], {k:"" for k in strings_to_remove})] = calendarSources['color']
+
+    return colors
 
 if __name__ == "__main__":
 
@@ -162,8 +186,9 @@ if __name__ == "__main__":
         table_rows = []
         if len(hours_per_project)>0:
             max_num_chars_project_name = len( max(hours_per_project.keys(), key=len) )
+            num_chars_hours            = len("00.0 h (00.0 %)")
             for project in hours_per_project:
-                hours_row = [f"┌-{project}{' '*( max_num_chars_project_name-len(project) )}-┐"]
+                hours_row = [f"┌-{project}{' '*( max(max_num_chars_project_name, num_chars_hours)-len(project) )}-┐"]
                 notes_row = [""]
                 for days in contemplated_weeks[week]:
                     for day in days:
@@ -179,14 +204,16 @@ if __name__ == "__main__":
                             notes_row.append("")
                 if any(h!='-' for h in hours_row[1:]): # excluding the first element of the row, which is the project name
                     table_rows.append(hours_row)
-                    total_hours_row               = sum(filter(lambda x: x != '-', hours_row[1:]))
-                    total_hours_row_str           = "{:04.1f}".format(total_hours_row)
-                    percent_str                   = "{:04.1f}".format(total_hours_row/TOTAL_WORKING_HOURS_EACH_WEEK[n_week]*100)
-                    notes_row[0]                  = f"||{''.join(ascii_bar(total_hours_row, TOTAL_WORKING_HOURS_EACH_WEEK[n_week], max_num_chars_project_name))}||"
+                    total_hours_row     = sum(filter(lambda x: x != "-", hours_row[1:]))
+                    total_hours_row_str = "{:04.1f}".format(total_hours_row)
+                    percent_str         = "{:04.1f}".format(total_hours_row/TOTAL_WORKING_HOURS_EACH_WEEK[n_week]*100)
+                    notes_row[0]        = "||" + "".join(ascii_bar(
+                                                         total_hours_row,
+                                                         TOTAL_WORKING_HOURS_EACH_WEEK[n_week],
+                                                         max(max_num_chars_project_name, num_chars_hours)
+                                          )) + "||"
                     table_rows.append(notes_row)
-                    table_rows.append([f"└-{total_hours_row_str} h ({percent_str} %)"
-                                                                       # 15 chars =        len(______________)
-                                       +' '*( max_num_chars_project_name-15 )+"-┘"]) #example: "09.5 h (22.4 %)"
+                    table_rows.append([f"└-{total_hours_row_str} h ({percent_str} %)"+" "*( max_num_chars_project_name-num_chars_hours )+"-┘"])
 
             # Print the table:
             print(f"Week nº{n_week} ({TOTAL_WORKING_HOURS_EACH_WEEK[n_week]} working hours):")
@@ -197,22 +224,18 @@ if __name__ == "__main__":
         import matplotlib.pyplot as plt
         import json
 
-        projects         = list(hours_per_project.keys())
-        project_data     = [[hours_per_project[project][date]['hours'] for date in contemplated_dates] for project in projects]
+        projects             = list(hours_per_project.keys())
+        project_data         = [
+            [hours_per_project[project][date]['hours'] for date in contemplated_dates] for project in projects
+        ]
 
-        project_data_percent = [[100 * sum(project_hours[i:i+5]) / TOTAL_WORKING_HOURS_EACH_WEEK[n_week] for i in range(0, len(project_hours), 5)] for project_hours in project_data]
+        project_data_percent = [
+            [100*sum(project_hours[i:i+5])/TOTAL_WORKING_HOURS_EACH_WEEK[n_week] for i in range(0,len(project_hours),5)] for project_hours in project_data
+        ]
         contemplated_mondays = [date for date in contemplated_dates if date.weekday() == 0]
-        bottom = [0] * len(contemplated_mondays)
+        bottom               = [0] * len(contemplated_mondays)
 
-        colors_config = json.load(open('.obsidian/plugins/obsidian-full-calendar/data.json'))
-        colors = {}
-        def replace_all(text, dic):
-            for i, j in dic.items():
-                text = text.replace(i, j)
-            return text
-        strings_to_remove = list(set([x for sublist in TAW_DIRS for x in sublist.split('/')]))
-        for calendarSources in colors_config['calendarSources']:
-            colors[replace_all(calendarSources['directory'], {k:"" for k in strings_to_remove})] = calendarSources['color']
+        colors               = load_colors_config(COLORS_CONFIG_FILE)
         plt.figure(figsize=(20, 12))
 
         #TODO: sort projects
