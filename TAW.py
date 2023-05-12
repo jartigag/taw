@@ -29,9 +29,8 @@ author  = "@jartigag"
 version = '1.1'
 date    = '2023-05-12'
 
-TAW_DIRS = ["taw/", "taw/_aparcados"]
-COLORS_CONFIG_FILE = ".obsidian/plugins/obsidian-full-calendar/data.json"
-
+TAW_DIRS                      = ["taw/", "taw/_aparcados"]
+COLORS_CONFIG_FILE            = ".obsidian/plugins/obsidian-full-calendar/data.json"
 TOTAL_WORKING_HOURS_EACH_WEEK = {
     **{i: 41 for i in range(1, 25)},  # rest of the year
     25: 36.5,                         # from June 20th to June 26th
@@ -129,7 +128,6 @@ def load_colors_config(config_file):
     strings_to_remove = list(set([x for sublist in TAW_DIRS for x in sublist.split('/')])) + ["/"]
 
     for calendarSources in colors_config['calendarSources']:
-        print(calendarSources['directory'],replace_all(calendarSources['directory'], {k:"" for k in strings_to_remove}))
         colors[replace_all(calendarSources['directory'], {k:"" for k in strings_to_remove})] = calendarSources['color']
 
     return colors
@@ -138,7 +136,6 @@ if __name__ == "__main__":
 
     # Get the command line arguments:
     args = sys.argv[1:]
-    plot = False
     if not args:
         weeks = [0]
     else:
