@@ -26,8 +26,8 @@
 # More info: https://github.com/jartigag/taw
 
 author  = "@jartigag"
-version = '1.1wip'
-date    = '2023-05-11'
+version = '1.1'
+date    = '2023-05-12'
 
 TAW_DIRS = ["taw/", "taw/_aparcados"]
 
@@ -93,6 +93,18 @@ def ascii_bar(value, max_value, max_bar_length):
 
 if __name__ == "__main__":
 
+    # Get the command line arguments:
+    args = sys.argv[1:]
+    plot = False
+    if not args:
+        weeks = [0]
+    else:
+        try:
+            weeks = sorted([int(x) for x in args[0].split(',')])
+        except ValueError:
+            print("[!] The provided week numbers must be integers separated by commas")
+            sys.exit(-1)
+
     # Create the nested dictionary to store the worked hours:
     hours_per_project = {}
     for dir in TAW_DIRS:
@@ -107,18 +119,6 @@ if __name__ == "__main__":
             sys.exit(-1)
     hours_per_project = {k: hours_per_project[k] for k in sorted(hours_per_project.keys(), key=lambda x: x.split()[1].strip('()')) }
     #example: Sort by keys OP23-006, PR21-040, PR21-042, TAW-001
-
-    # Get the command line arguments:
-    args = sys.argv[1:]
-    plot = False
-    if not args:
-        weeks = [0]
-    else:
-        try:
-            weeks = sorted([int(x) for x in args[0].split(',')])
-        except ValueError:
-            print("[!] The provided week numbers must be integers separated by commas")
-            sys.exit(-1)
 
     # Set the dates on which worked hours will be added:
     contemplated_dates = []
@@ -176,30 +176,46 @@ if __name__ == "__main__":
                     total_hours_row_str           = "{:04.1f}".format(total_hours_row)
                     percent_str                   = "{:04.1f}".format(total_hours_row/TOTAL_WORKING_HOURS_EACH_WEEK[n_week]*100)
                     notes_row[0]                  = f"||{''.join(ascii_bar(total_hours_row, TOTAL_WORKING_HOURS_EACH_WEEK[n_week], max_num_chars_project_name))}||"
-                    table_rows.append(notes_row)                                                                    # 15 chars =        len(______________)
-                    table_rows.append([f"└-{total_hours_row_str} h ({percent_str} %){' '*( max_num_chars_project_name-15 )}-┘"]) #example: "09.5 h (22.4 %)"
+                    table_rows.append(notes_row)
+                    table_rows.append([f"└-{total_hours_row_str} h ({percent_str} %)"
+                                                                       # 15 chars =        len(______________)
+                                       +' '*( max_num_chars_project_name-15 )+"-┘"]) #example: "09.5 h (22.4 %)"
 
             # Print the table:
             print(f"Week nº{n_week} ({TOTAL_WORKING_HOURS_EACH_WEEK[n_week]} working hours):")
             print(tabulate(table_rows, headers=['Project'] + [str(date) for date in contemplated_weeks[week][0]], numalign='right'),"\n")
 
     # Visualize the weeks graphically:
-    #TODO: Control the colors
-    #TODO: Show only Mondays on the X-axis
     if input("Generate graph? [y/N] ").lower().startswith("y"):
         import matplotlib.pyplot as plt
+        import json
+
         projects         = list(hours_per_project.keys())
         project_data     = [[hours_per_project[project][date]['hours'] for date in contemplated_dates] for project in projects]
 
         project_data_percent = [[100 * sum(project_hours[i:i+5]) / TOTAL_WORKING_HOURS_EACH_WEEK[n_week] for i in range(0, len(project_hours), 5)] for project_hours in project_data]
+        contemplated_mondays = [date for date in contemplated_dates if date.weekday() == 0]
+        bottom = [0] * len(contemplated_mondays)
 
+        colors_config = json.load(open('.obsidian/plugins/obsidian-full-calendar/data.json'))
+        colors = {}
+        def replace_all(text, dic):
+            for i, j in dic.items():
+                text = text.replace(i, j)
+            return text
+        strings_to_remove = list(set([x for sublist in TAW_DIRS for x in sublist.split('/')]))
+        for calendarSources in colors_config['calendarSources']:
+            colors[replace_all(calendarSources['directory'], {k:"" for k in strings_to_remove})] = calendarSources['color']
         plt.figure(figsize=(20, 12))
-        bottom = [0] * len(contemplated_weeks)
+
+        #TODO: sort projects
         for p in range(len(projects)):
-            plt.bar([contemplated_weeks[i][0][0] for i in contemplated_weeks], project_data_percent[p], bottom=bottom, label=projects[p])
+            plt.bar(contemplated_mondays, project_data_percent[p],
+                    width=3, bottom=bottom, label=projects[p], color=colors.get(projects[p])
+            )
             #   1st day of each week (Monday) ^^^
             # Stack the bars so that each week adds up to 100%:
-            bottom = [bottom[s] + project_data_percent[p][s] for s in range(len(contemplated_weeks))]
+            bottom = [bottom[s] + project_data_percent[p][s] for s in range(len(contemplated_mondays))]
 
         plt.ylim([0, 100])
         plt.legend()
