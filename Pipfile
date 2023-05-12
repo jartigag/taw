@@ -1,7 +1,10 @@
 # How to use this file:
 # $ python -m pipenv install
 # so a virtual environment will be created. Then, the tool can be executed with:
-# $ python -m pipenv run python pretaw.py
+# $ python -m pipenv run python TAW.py
+# or
+# $ chmod +x TAW.py
+# $ python -m pipenv run ./TAW.py
 
 [[source]]
 url = "https://pypi.org/simple"
