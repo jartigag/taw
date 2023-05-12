@@ -91,6 +91,25 @@ def ascii_bar(value, max_value, max_bar_length):
         bar[beginning_day_position] = "."
     return bar
 
+def init_nested_dict(dirs):
+    hours_per_project = {}
+    for dir in dirs:
+        if Path(dir+"/").is_dir():
+            for subdir in Path(dir).iterdir():
+                project = subdir.name
+                if subdir.is_dir()
+                    hours_per_project[project] = {}
+        else:
+            print(f'[!] Folder "{dir}" not found')
+            sys.exit(-1)
+    # Sort dict by code if project code between parenthesis, else sort by project name:
+    hours_per_project = {k: hours_per_project[k] for k in sorted(
+                            hours_per_project.keys(), key=lambda x: x[x.find("(")+1:x.find(")")] if x.find('(')!=x.find(')')!=-1 else x
+                        ) }
+
+    return hours_per_project
+
+
 if __name__ == "__main__":
 
     # Get the command line arguments:
@@ -106,19 +125,7 @@ if __name__ == "__main__":
             sys.exit(-1)
 
     # Create the nested dictionary to store the worked hours:
-    hours_per_project = {}
-    for dir in TAW_DIRS:
-        if Path(dir+"/").is_dir():
-            for subdir in Path(dir).iterdir():
-                project = subdir.name
-                if subdir.is_dir() and re.match(r"^\w+\s\(.*-.*\)$", project):
-                #example: "OPOR1 (OP23-006)", "INTE (TAW-001)", "PROYX (PR21-042)", "PROYZ (PR21-040)"
-                    hours_per_project[project] = {}
-        else:
-            print(f'[!] Folder "{dir}" not found')
-            sys.exit(-1)
-    hours_per_project = {k: hours_per_project[k] for k in sorted(hours_per_project.keys(), key=lambda x: x.split()[1].strip('()')) }
-    #example: Sort by keys OP23-006, PR21-040, PR21-042, TAW-001
+    hours_per_project = init_nested_dict(TAW_DIRS)
 
     # Set the dates on which worked hours will be added:
     contemplated_dates = []
