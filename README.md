@@ -2,19 +2,19 @@
 
 **T**ime **A**t **W**eek
 
-## ¿Qué hace?
+## What does it do?
 
-> Este script de Python calcula las horas trabajadas en un periodo determinado.
+> This Python script calculates the hours worked in a given period.
 > 
-> El usuario puede elegir cuántas semanas se quieren revisar, y el programa calcula las horas trabajadas durante cada semana en días laborables, para cada proyecto registrado. Las horas trabajadas se encuentran registradas en archivos de texto en formato YAML, ubicados en subdirectorios dentro de una carpeta principal llamada "taw". En los archivos de texto se almacena información sobre las horas trabajadas en cada día, separadas por proyecto.
+> The user can choose how many weeks to review, and the program calculates the hours worked for each project during each week on workdays. The worked hours are stored in text files in YAML format located in subdirectories within a main folder called "taw". The text files store information about the hours worked on each day, separated by project.
 > 
-> El programa utiliza la librería "tabulate" para generar una tabla con los datos resumidos. También se incluyen funciones auxiliares para procesar las horas trabajadas y crear una barra gráfica ASCII para representar visualmente las horas trabajadas.[^1]
+> The program uses the "tabulate" library to generate a table with summarized data. It also includes auxiliary functions to process the worked hours and create an ASCII bar chart to visually represent the worked hours.[^1]
 
-[^1]: Descripción generada con ChatGPT
+[^1]: Description generated with ChatGPT
 
-## Instalación
+## Installation
 
-```
+```python
 # ┌== Recommended installation =============================┐
 #
 #  Dependencies 'matplotlib', 'pyyaml' and 'tabulate',
@@ -26,7 +26,7 @@
 #
 # └=========================================================┘
 ```
-```
+```python
 # ┌== Usage ================================================┐
 #
 #  Print hours per project worked in the current week:
@@ -38,4 +38,10 @@
 #  $ pipenv run ./TAW.py -2,-1,0
 #
 # └=========================================================┘
+```
+
+## Example
+
+```shell
+$ pipenv run ./TAW.py $(seq -s, -18 0)
 ```
