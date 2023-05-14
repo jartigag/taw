@@ -69,8 +69,15 @@ def convert_hhmm_to_decimal_hour(hhmm_string):
     return hours + minutes/60
 
 def working_days_of_a_specific_week(week_number=0):
-    today     = datetime.today().date()
-    days_list = [today + timedelta(days=i) for i in range(0-today.weekday()+7*week_number, 5-today.weekday()+7*week_number)]
+    if week_number<=0:
+    # so week_number is relative to today:
+        today   = datetime.today().date()
+        ref_day = today
+    else:
+    # so week_number is relative to the actual year:
+        first_day_this_year = datetime.today().date().replace(month=1, day=1)
+        ref_day             = first_day_this_year
+    days_list = [ref_day + timedelta(days=i) for i in range(0-ref_day.weekday()+7*week_number, 5-ref_day.weekday()+7*week_number)]
     return days_list
 
 def ascii_bar(value, max_value, max_bar_length):
@@ -148,6 +155,7 @@ if __name__ == "__main__":
     # Create the nested dictionary to store the worked hours:
     hours_per_project = init_nested_dict(TAW_DIRS)
 
+    #TODO: simplify (2 `for week in weeks`? `contemplated_dates` and `contemplated_weeks?`)
     # Set the dates on which worked hours will be added:
     contemplated_dates = []
     contemplated_weeks = {}
@@ -240,7 +248,6 @@ if __name__ == "__main__":
             plt.bar(contemplated_mondays, project_data_percent[p],
                     width=3, bottom=bottom, label=projects[p], color=colors.get(projects[p])
             )
-            #   1st day of each week (Monday) ^^^
             # Stack the bars so that each week adds up to 100%:
             bottom = [bottom[s] + project_data_percent[p][s] for s in range(len(contemplated_mondays))]
 
@@ -250,7 +257,7 @@ if __name__ == "__main__":
         plt.ylabel("% Hours")
         first_week_num, first_week_year = contemplated_dates[0].isocalendar()[1],  contemplated_dates[0].isocalendar()[0]
         last_week_num,  last_week_year  = contemplated_dates[-1].isocalendar()[1], contemplated_dates[-1].isocalendar()[0]
-        plt.title(f"Worked hours per project between week {first_week_num} of {first_week_year} and week {last_week_num} of {last_week_year}")
+        plt.title(f"Worked hours per project between week #{first_week_num} of {first_week_year} and week #{last_week_num} of {last_week_year}")
 
         filename = f"TAW - Worked hours per project from {contemplated_dates[0]} to {contemplated_dates[-1]}.png"
         plt.savefig(filename)
