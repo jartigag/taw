@@ -43,5 +43,41 @@
 ## Example
 
 ```shell
-$ pipenv run ./TAW.py $(seq -s, -18 0)
+$ pipenv run ./TAW.py $(seq -s, 1 19)
+#                                        if executed at week #19 of the year, it is equivalent to
+#                                        $ pipenv run ./TAW.py $(seq -s, -19 -1)
+#                                        and also to
+#                                        $ pipenv run ./TAW.py $(seq -s, 1 $(date +%U))
+Week nº1 (41 working hours):
+Project                   2023-01-02    2023-01-03    2023-01-04          2023-01-05           2023-01-06
+------------------------  ------------  ------------  ------------------  -------------------  ------------
+┌-HOLIDAYS   (23-0004)-┐  8.5           8.5           -                   -                    7.0
+||.███.███.██▋.   .   ||  holidays      holidays                                               p.holiday
+└-24.0 h (58.5 %)     -┘
+┌-CLI1                -┐  -             -             -                   2.5                  -
+||.▏  .   .   .   .   ||                                                  scrum
+└-02.5 h (06.1 %)     -┘
+┌-CLI6                -┐  -             -             8.5                 -                    -
+||.███.   .   .   .   ||                              review
+                                                      report
+└-08.5 h (20.7 %)     -┘
+┌-OP2                 -┐  -             -             -                   4.0                  -
+||.▉  .   .   .   .   ||                                                  finish offer
+└-04.0 h (09.8 %)     -┘
+┌-PROJINT 1           -┐  -             -             -                   2.0                  -
+||.   .   .   .   .   ||                                                  internal tests
+└-02.0 h (04.9 %)     -┘
+
+[..]
+
+Project                   2023-05-08                  2023-05-09           2023-05-10              2023-05-11                    2023-05-12
+------------------------  --------------------------  -------------------  ----------------------  ----------------------------  ----------------
+┌-CLI1                -┐  1.0                         3.0                  1.5                     1.0                           0.5
+||.██▍.   .   .   .   ||  test                        test. meet cust      test                    test                          test
+└-07.0 h (17.1 %)     -┘
+
+Generate graph? [y/N] y
+Graph saved in file: "TAW - Worked hours per project from 2023-01-02 to 2023-05-19.png"
 ```
+
+![](TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2023-01-02&#32;to&#32;2023-05-19.png)
