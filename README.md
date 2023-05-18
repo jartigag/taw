@@ -45,7 +45,7 @@
 ```shell
 $ pipenv run ./TAW.py $(seq -s, 1 19)
 #                                        if executed at week #19 of the year, it is equivalent to
-#                                        $ pipenv run ./TAW.py $(seq -s, -19 -1)
+#                                        $ pipenv run ./TAW.py $(seq -s, -19 0)
 #                                        and also to
 #                                        $ pipenv run ./TAW.py $(seq -s, 1 $(date +%U))
 Week nº1 (41 working hours):
@@ -77,7 +77,7 @@ Project                   2023-05-08                  2023-05-09           2023-
 └-07.0 h (17.1 %)     -┘
 
 Generate graph? [y/N] y
-Graph saved in file: "TAW - Worked hours per project from 2023-01-02 to 2023-05-19.png"
+Graph saved in file: "TAW - Worked hours per project from 2023-01-02 to 2023-05-12.png"
 ```
 
-![](TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2023-01-02&#32;to&#32;2023-05-19.png)
+![](TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2023-01-02&#32;to&#32;2023-05-12.png)
