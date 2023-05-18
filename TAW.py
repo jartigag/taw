@@ -136,13 +136,13 @@ def load_colors_config(config_file):
     return colors
 
 def sort_projects(projects, config_file):
-    # Place 'VACACIONES' project at the end of the list and sort it:
+    # Place 'HOLIDAYS' project at the end of the list and sort it:
     #TODO: configurable order
     projects = list(hours_per_project.keys())
-    projects.remove('VACACIONES (23-0004)')
+    projects.remove('HOLIDAYS')
     projects = sorted(projects,
                 key=lambda x: x[x.find("(")+1:x.find(")")] if x.find('(')!=x.find(')')!=-1 else x,
-                reverse=True) + [('VACACIONES (23-0004)')]
+                reverse=True) + [('HOLIDAYS')]
     return projects
 
 
@@ -234,6 +234,7 @@ if __name__ == "__main__":
     # Visualize the weeks graphically:
     if input("Generate graph? [y/N] ").lower().startswith("y"):
         import matplotlib.pyplot as plt
+        import matplotlib.dates as mdates
         import matplotlib.ticker as mtick
         import json
 
@@ -253,18 +254,19 @@ if __name__ == "__main__":
         for p in range(len(projects)):
             plt.bar(contemplated_mondays, project_data_percent[p],
                     width=5, bottom=bottom, label=projects[p], color=colors.get(projects[p]),
-                    edgecolor='black' if projects[p] == 'VACACIONES (23-0004)' else None, linewidth=0.2 if projects[p] == 'VACACIONES (23-0004)' else None
+                    edgecolor='black' if projects[p] == 'HOLIDAYS' else None, linewidth=0.2 if projects[p] == 'HOLIDAYS' else None
             )
             # Stack the bars so each week sums up to 100%:
             bottom = [bottom[s] + project_data_percent[p][s] for s in range(len(contemplated_mondays))]
         plt.legend(bbox_to_anchor=(-0.15, 1.0), loc='upper left')
-        plt.xlabel("Date")
         plt.grid(axis='y', which='major')
         plt.minorticks_on()
         plt.grid(axis='y', which='minor', linewidth='0.8', linestyle=':')
         plt.ylim([0, 100])
         plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter())
         plt.ylabel("% Hours")
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%B %Y'))
+        plt.gca().xaxis.set_major_locator(mdates.MonthLocator(bymonthday=1))
         plt.tight_layout(pad=2.5)
         first_week_num, first_week_year = contemplated_dates[0].isocalendar()[1],  contemplated_dates[0].isocalendar()[0]
         last_week_num,  last_week_year  = contemplated_dates[-1].isocalendar()[1], contemplated_dates[-1].isocalendar()[0]
