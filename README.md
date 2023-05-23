@@ -92,7 +92,7 @@ Graph saved in file: "TAW - Worked hours per project from 2023-01-02 to 2023-05-
 
 
 ```shell
-$ yes | ./gen_graphs_in_rows_of_13_bars.sh >/dev/null 2>&1
+$ yes | ./demo_scripts/gen_graphs_in_rows_of_13_bars.sh >/dev/null 2>&1
 ```
 
 ![](TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2022-09-26&#32;to&#32;2022-12-23.png)
