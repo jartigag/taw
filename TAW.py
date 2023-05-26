@@ -31,7 +31,7 @@
 
 author  = "@jartigag"
 version = '1.1'
-date    = '2023-05-12'
+date    = '2023-05-26'
 
 TAW_DIRS                      = ["taw/", "taw/_aparcados"]
 COLORS_CONFIG_FILE            = ".obsidian/plugins/obsidian-full-calendar/data.json"
@@ -137,12 +137,12 @@ def load_colors_config(config_file):
 
 def sort_projects(projects, config_file):
     # Place 'HOLIDAYS' project at the end of the list and sort it:
-    #TODO: configurable order
     projects = list(hours_per_project.keys())
-    projects.remove('HOLIDAYS')
-    projects = sorted(projects,
-                key=lambda x: x[x.find("(")+1:x.find(")")] if x.find('(')!=x.find(')')!=-1 else x,
-                reverse=True) + [('HOLIDAYS')]
+    projects = sorted(
+                    projects,
+                    key=lambda x: x[x.find("(")+1:x.find(")")] if x.find('(')!=x.find(')')!=-1 else x,
+                    reverse=True
+                )
     return projects
 
 
@@ -238,7 +238,11 @@ if __name__ == "__main__":
         import matplotlib.ticker as mtick
         import json
 
-        projects             = sort_projects(hours_per_project, COLORS_CONFIG_FILE)
+        colors               = load_colors_config(COLORS_CONFIG_FILE)
+        if colors:
+            projects         = list(colors.keys())
+        else:
+            projects         = sort_projects(hours_per_project, COLORS_CONFIG_FILE)
         project_data         = [
             [hours_per_project[project][date]['hours'] for date in contemplated_dates] for project in projects
         ]
@@ -248,13 +252,13 @@ if __name__ == "__main__":
         ]
         contemplated_mondays = [date for date in contemplated_dates if date.weekday() == 0]
         bottom               = [0] * len(contemplated_mondays)
-        colors               = load_colors_config(COLORS_CONFIG_FILE)
 
         plt.figure(figsize=(25, 6))
         for p in range(len(projects)):
+            c = colors.get(projects[p])
             plt.bar(contemplated_mondays, project_data_percent[p],
-                    width=5, bottom=bottom, label=projects[p], color=colors.get(projects[p]),
-                    edgecolor='black' if projects[p] == 'HOLIDAYS' else None, linewidth=0.2 if projects[p] == 'HOLIDAYS' else None
+                    width=5, bottom=bottom, label=projects[p], color=c,
+                    edgecolor='black' if c=="#ffffff" else None, linewidth=0.2 if c=="#ffffff" else None
             )
             # Stack the bars so each week sums up to 100%:
             bottom = [bottom[s] + project_data_percent[p][s] for s in range(len(contemplated_mondays))]
