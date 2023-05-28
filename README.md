@@ -88,7 +88,7 @@ Generate graph? [y/N] y
 Graph saved in file: "TAW - Worked hours per project from 2023-01-02 to 2023-05-12.png"
 ```
 
-![](plots/TAW&#32;-&#32;2023&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2023-01-02&#32;to&#32;2023-05-12.png)
+![](plots/TAW&#32;-&#32;2023&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2023-01-02&#32;to&#32;2023-06-02.png)
 
 
 ```shell
