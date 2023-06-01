@@ -30,8 +30,8 @@
 # More info: https://github.com/jartigag/taw
 
 author  = "@jartigag"
-version = '1.1'
-date    = '2023-05-26'
+version = '1.2'
+date    = '2023-06-02'
 
 TAW_DIRS                      = ["taw/", "taw/_aparcados"]
 COLORS_CONFIG_FILE            = ".obsidian/plugins/obsidian-full-calendar/data.json"
@@ -256,12 +256,13 @@ if __name__ == "__main__":
         plt.figure(figsize=(25, 6))
         for p in range(len(projects)):
             c = colors.get(projects[p])
-            plt.bar(contemplated_mondays, project_data_percent[p],
-                    width=5, bottom=bottom, label=projects[p], color=c,
-                    edgecolor='black' if c=="#ffffff" else None, linewidth=0.2 if c=="#ffffff" else None
-            )
-            # Stack the bars so each week sums up to 100%:
-            bottom = [bottom[s] + project_data_percent[p][s] for s in range(len(contemplated_mondays))]
+            if any(d>0 for d in project_data_percent[p]):
+                plt.bar(contemplated_mondays, project_data_percent[p],
+                        width=5, bottom=bottom, label=projects[p], color=c,
+                        edgecolor='black' if c=="#ffffff" else None, linewidth=0.2 if c=="#ffffff" else None
+                )
+                # Stack the bars so each week sums up to 100%:
+                bottom = [bottom[s] + project_data_percent[p][s] for s in range(len(contemplated_mondays))]
         plt.legend(bbox_to_anchor=(-0.15, 1.0), loc='upper left')
         plt.grid(axis='y', which='major')
         plt.minorticks_on()

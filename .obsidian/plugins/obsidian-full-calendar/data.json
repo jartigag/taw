@@ -1,0 +1,94 @@
+{
+  "calendarSources": [
+    {
+      "type": "local",
+      "color": "#ffffff",
+      "directory": "taw/HOLIDAYS",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#eeeeee",
+      "directory": "taw/PROJINT 1",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#dddddd",
+      "directory": "taw/PROJINT 2",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#eeffad",
+      "directory": "taw/CLI7"
+    },
+    {
+      "type": "local",
+      "color": "#fce8b2",
+      "directory": "taw/_aparcados/CLI6",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#ffb8b8",
+      "directory": "taw/CLI1",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#d5a6bd",
+      "directory": "taw/CLI2",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#9fc5e8",
+      "directory": "taw/CLI3",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#b4a7d6",
+      "directory": "taw/_aparcados/CLI4",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#c464a6",
+      "directory": "taw/_aparcados/CLI5",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#adffaf",
+      "directory": "taw/OP1",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#dcfee6",
+      "directory": "taw/_aparcados/OP2",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#ff94a8",
+      "directory": "taw/_aparcados/OP3",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#636363",
+      "directory": "taw/_aparcados/OTHER",
+      "timeInNoteTitle": true
+    }
+  ],
+  "defaultCalendar": 0,
+  "firstDay": 0,
+  "initialView": {
+    "desktop": "timeGridWeek",
+    "mobile": "timeGrid3Days"
+  },
+  "timeFormat24h": false
+}
