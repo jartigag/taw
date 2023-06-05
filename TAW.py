@@ -33,7 +33,7 @@ author  = "@jartigag"
 version = '1.2'
 date    = '2023-06-02'
 
-TAW_DIRS                      = ["taw/", "taw/_aparcados"]
+TAW_DIRS                      = ["taw/", "taw/_parked", "taw/__archived"]
 COLORS_CONFIG_FILE            = ".obsidian/plugins/obsidian-full-calendar/data.json"
 TOTAL_WORKING_HOURS_EACH_WEEK = {
     **{i: 41 for i in range(1, 25)},  # rest of the year

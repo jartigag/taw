@@ -2,85 +2,116 @@
   "calendarSources": [
     {
       "type": "local",
-      "color": "#ffffff",
-      "directory": "taw/HOLIDAYS",
-      "timeInNoteTitle": true
-    },
-    {
-      "type": "local",
       "color": "#eeeeee",
-      "directory": "taw/PROJINT 1",
+      "directory": "taw/PROJINT1",
       "timeInNoteTitle": true
     },
     {
       "type": "local",
       "color": "#dddddd",
-      "directory": "taw/PROJINT 2",
+      "directory": "taw/PROJINT2",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#fce8b2",
+      "directory": "taw/__archived/CLI1",
       "timeInNoteTitle": true
     },
     {
       "type": "local",
       "color": "#eeffad",
-      "directory": "taw/CLI7"
-    },
-    {
-      "type": "local",
-      "color": "#fce8b2",
-      "directory": "taw/_aparcados/CLI6",
-      "timeInNoteTitle": true
-    },
-    {
-      "type": "local",
-      "color": "#ffb8b8",
-      "directory": "taw/CLI1",
-      "timeInNoteTitle": true
-    },
-    {
-      "type": "local",
-      "color": "#d5a6bd",
-      "directory": "taw/CLI2",
-      "timeInNoteTitle": true
+      "directory": "taw/__archived/CLI2"
     },
     {
       "type": "local",
       "color": "#9fc5e8",
-      "directory": "taw/CLI3",
+      "directory": "taw/__archived/CLI3"
+    },
+    {
+      "type": "local",
+      "color": "#eeca2a",
+      "directory": "taw/__archived/CLI4"
+    },
+    {
+      "type": "local",
+      "color": "#cdffbb",
+      "directory": "taw/__archived/OP1"
+    },
+    {
+      "type": "local",
+      "color": "#83d2f3",
+      "directory": "taw/__archived/PROJINT3"
+    },
+    {
+      "type": "local",
+      "color": "#d5a6bd",
+      "directory": "taw/CLI6",
       "timeInNoteTitle": true
     },
     {
       "type": "local",
       "color": "#b4a7d6",
-      "directory": "taw/_aparcados/CLI4",
+      "directory": "taw/_parked/CLI7",
       "timeInNoteTitle": true
     },
     {
       "type": "local",
-      "color": "#c464a6",
-      "directory": "taw/_aparcados/CLI5",
+      "color": "#9fc5e8",
+      "directory": "taw/CLI8",
       "timeInNoteTitle": true
     },
     {
       "type": "local",
-      "color": "#adffaf",
-      "directory": "taw/OP1",
+      "color": "#cc0000",
+      "directory": "taw/_parked/PROJINT4"
+    },
+    {
+      "type": "local",
+      "color": "#ff94a8",
+      "directory": "taw/_parked/OP2",
       "timeInNoteTitle": true
     },
     {
       "type": "local",
       "color": "#dcfee6",
-      "directory": "taw/_aparcados/OP2",
+      "directory": "taw/_parked/OP3",
       "timeInNoteTitle": true
     },
     {
       "type": "local",
-      "color": "#ff94a8",
-      "directory": "taw/_aparcados/OP3",
+      "color": "#c464a6",
+      "directory": "taw/_parked/CLI9",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#ffb8b8",
+      "directory": "taw/CLI10",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#adffaf",
+      "directory": "taw/OP4",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#023972",
+      "directory": "taw/CLI11",
       "timeInNoteTitle": true
     },
     {
       "type": "local",
       "color": "#636363",
-      "directory": "taw/_aparcados/OTHER",
+      "directory": "taw/_parked/OTHER",
+      "timeInNoteTitle": true
+    },
+    {
+      "type": "local",
+      "color": "#ffffff",
+      "directory": "taw/HOLIDAYS",
       "timeInNoteTitle": true
     }
   ],

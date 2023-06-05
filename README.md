@@ -2,6 +2,11 @@
 
 **T**ime **A**t **W**eek
 
+videodemo:
+<p align="center">
+  <a href="https://fediverse.tv/w/4FaLBqpb3taLEy9aioCty2"><img src="https://fediverse.tv/lazy-static/previews/032bf24e-5fe8-474d-99f9-cf4bd76cd093.jpg"></a>
+</p>
+
 ## What does it do?
 
 ##### v1.0
@@ -95,6 +100,10 @@ Graph saved in file: "TAW - Worked hours per project from 2023-01-02 to 2023-05-
 $ yes | ./demo_scripts/gen_graphs_in_rows_of_13_bars.sh >/dev/null 2>&1
 ```
 
-![](plots/TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2022-09-26&#32;to&#32;2022-12-23.png)
-![](plots/TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2022-12-26&#32;to&#32;2023-03-24.png)
-![](plots/TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2023-03-27&#32;to&#32;2023-06-23.png)
+![](plots/TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2021-09-20&#32;to&#32;2021-12-17.png)
+![](plots/TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2021-12-20&#32;to&#32;2022-03-18.png)
+![](plots/TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2022-03-21&#32;to&#32;2022-06-17.png)
+![](plots/TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2022-06-20&#32;to&#32;2022-09-16.png)
+![](plots/TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2022-09-19&#32;to&#32;2022-12-16.png)
+![](plots/TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2022-12-19&#32;to&#32;2023-03-17.png)
+![](plots/TAW&#32;-&#32;Worked&#32;hours&#32;per&#32;project&#32;from&#32;2023-03-20&#32;to&#32;2023-06-16.png)
